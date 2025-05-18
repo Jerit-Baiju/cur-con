@@ -185,23 +185,6 @@ export default function Home() {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Swap Button */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    onClick={handleSwapCurrencies}
-                    variant='ghost'
-                    size='icon'
-                    className='mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105'>
-                    <FiRefreshCw className='text-white' />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-zinc-800 text-white">
-                  Swap currencies
-                </TooltipContent>
-              </Tooltip>
-
               {/* To Currency */}
               <div className='space-y-2'>
                 <Label htmlFor='toCurrency' className='block text-sm font-medium text-zinc-300'>
@@ -240,9 +223,20 @@ export default function Home() {
                       {parseFloat(amount) ? parseFloat(amount).toFixed(2) : '0.00'} {fromCurrency}
                     </span>
                   </div>
-                  <div className='bg-blue-700/40 rounded-full p-1'>
-                    <FiArrowRight className='text-blue-300' />
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        onClick={handleSwapCurrencies}
+                        variant='ghost'
+                        size='icon'
+                        className='flex h-8 w-8 items-center justify-center rounded-full bg-blue-700/40 hover:bg-blue-600 transition-all duration-200'>
+                        <FiRefreshCw className='text-blue-300 hover:text-white' />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-zinc-800 text-white">
+                      Swap currencies
+                    </TooltipContent>
+                  </Tooltip>
                   <div className='flex items-center gap-2'>
                     {toCurrency &&
                       (() => {
