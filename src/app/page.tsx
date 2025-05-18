@@ -115,20 +115,6 @@ export default function Home() {
                   Currency Converter
                 </CardTitle>
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="secondary" className="bg-blue-900/30 text-blue-300 border-blue-700/20">
-                    {Object.keys(RATES).length} currencies
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent className="bg-zinc-800 text-white flex gap-1">
-                  {Object.keys(RATES).map((currency) => (
-                    <Badge key={currency} variant="outline" className="border-blue-700/30">
-                      {currency}
-                    </Badge>
-                  ))}
-                </TooltipContent>
-              </Tooltip>
             </div>
           </CardHeader>
 
@@ -172,9 +158,13 @@ export default function Home() {
                   <SelectTrigger className='w-full border-blue-900/30 bg-zinc-800/70 text-white hover:bg-zinc-800'>
                     <SelectValue placeholder='Select currency' />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
                     {Object.keys(RATES).map((currency) => (
-                      <SelectItem key={currency} value={currency} className='flex items-center gap-2'>
+                      <SelectItem 
+                        key={currency} 
+                        value={currency} 
+                        className='flex items-center gap-2 data-[highlighted]:bg-blue-700/30 data-[highlighted]:text-zinc-100'
+                      >
                         {(() => {
                           const CurrencyIcon = CURRENCY_ICONS[currency as keyof typeof RATES];
                           return <CurrencyIcon className='h-4 w-4 inline mr-1' />;
@@ -194,9 +184,13 @@ export default function Home() {
                   <SelectTrigger className='w-full border-blue-900/30 bg-zinc-800/70 text-white hover:bg-zinc-800'>
                     <SelectValue placeholder='Select currency' />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-zinc-900 border-zinc-700 text-zinc-200">
                     {Object.keys(RATES).map((currency) => (
-                      <SelectItem key={currency} value={currency} className='flex items-center gap-2'>
+                      <SelectItem 
+                        key={currency} 
+                        value={currency} 
+                        className='flex items-center gap-2 data-[highlighted]:bg-blue-700/30 data-[highlighted]:text-zinc-100'
+                      >
                         {(() => {
                           const CurrencyIcon = CURRENCY_ICONS[currency as keyof typeof RATES];
                           return <CurrencyIcon className='h-4 w-4 inline mr-1' />;
