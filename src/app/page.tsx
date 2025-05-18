@@ -10,6 +10,7 @@ import { TbCurrencyDollar, TbCurrencyEuro, TbCurrencyPound, TbCurrencyRupee, TbC
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -38,6 +39,7 @@ export default function Home() {
   const [fromCurrency, setFromCurrency] = useState<keyof typeof RATES>('USD');
   const [toCurrency, setToCurrency] = useState<keyof typeof RATES>('EUR');
   const [result, setResult] = useState<number>(0);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const [history, setHistory] = useState<
     Array<{
       id: string;
@@ -395,27 +397,44 @@ export default function Home() {
                   </div>
                 </CardContent>
                 <CardFooter className="p-0 mt-4 flex justify-center">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <motion.div
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
-                        className="w-full"
+                  <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
                       >
+                        Clear History
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="bg-zinc-900 border border-zinc-800 text-white">
+                      <DialogHeader>
+                        <DialogTitle className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">Clear History</DialogTitle>
+                        <DialogDescription className="text-zinc-300">
+                          Are you sure you want to clear all conversion history? This action cannot be undone.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <DialogFooter className="mt-4 gap-2">
                         <Button 
                           variant="outline" 
-                          size="sm" 
-                          className="w-full bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                          onClick={() => setHistory([])}
+                          onClick={() => setDialogOpen(false)}
+                          className="bg-zinc-800 border-zinc-700 text-zinc-300 hover:bg-zinc-700"
                         >
-                          Clear History
+                          Cancel
                         </Button>
-                      </motion.div>
-                    </TooltipTrigger>
-                    <TooltipContent className="bg-zinc-800 text-white">
-                      Clear all conversion history
-                    </TooltipContent>
-                  </Tooltip>
+                        <Button 
+                          variant="destructive"
+                          onClick={() => {
+                            setHistory([]);
+                            setDialogOpen(false);
+                          }}
+                          className="bg-red-600 hover:bg-red-700"
+                        >
+                          Clear All
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                 </CardFooter>
               </Card>
             </motion.div>
