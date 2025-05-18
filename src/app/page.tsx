@@ -102,15 +102,12 @@ export default function Home() {
           </TooltipContent>
         </Tooltip>
       </div>
-      <div className='flex w-full max-w-5xl gap-6 flex-col lg:flex-row'>
+      <div className={`flex w-full max-w-5xl gap-6 flex-col lg:flex-row ${history.length === 0 ? 'justify-center' : ''}`}>
         {/* Main Converter Card */}
-        <Card className='w-full lg:max-w-[60%] rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
+        <Card className={`w-full ${history.length === 0 ? 'lg:max-w-[650px]' : 'lg:max-w-[60%]'} rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl`}>
           <CardHeader className='mb-4 flex items-center justify-between p-0'>
             <div className='flex items-center justify-between'>
               <div className='flex items-center gap-3'>
-                <div className='bg-blue-600 rounded-full p-2'>
-                  <FiRefreshCw className='text-white h-5 w-5' />
-                </div>
                 <CardTitle className='text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent'>
                   Currency Converter
                 </CardTitle>
@@ -245,20 +242,39 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Convert Button */}
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={addToHistory}
-                  className='w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl font-medium mt-2 transition-all hover:shadow-lg hover:shadow-blue-700/20'>
-                  <FiCheck className="mr-2 h-4 w-4" />
-                  Convert & Save
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent className="bg-zinc-800 text-white">
-                Save this conversion to history
-              </TooltipContent>
-            </Tooltip>
+            {/* Convert Button - Two buttons in one row */}
+            <div className="grid grid-cols-2 gap-4 mt-2">
+              <Button
+                onClick={() => {
+                  const numericAmount = parseFloat(amount);
+                  if (!isNaN(numericAmount) && numericAmount > 0) {
+                    // Just update the result without adding to history
+                    setResult(numericAmount * (RATES[toCurrency] / RATES[fromCurrency]));
+                  }
+                }}
+                disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
+                variant="outline"
+                className='py-6 border-blue-700/30 bg-blue-900/20 text-blue-300 hover:bg-blue-800/30 hover:text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed'>
+                <FiRefreshCw className="mr-2 h-5 w-5" />
+                Convert
+              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={addToHistory}
+                    disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
+                    className='bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-xl font-medium transition-all hover:shadow-lg hover:shadow-blue-700/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-700'>
+                    <FiCheck className="mr-2 h-5 w-5" />
+                    Save to History
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 text-white">
+                  {isNaN(parseFloat(amount)) || parseFloat(amount) <= 0
+                    ? "Please enter a valid positive amount"
+                    : "Save this conversion to history"}
+                </TooltipContent>
+              </Tooltip>
+            </div>
           </CardContent>
 
           <CardFooter className='p-0 mt-5 justify-center flex-col'>
@@ -270,53 +286,27 @@ export default function Home() {
                   </span>
                 </Badge>
               </div>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Badge variant="outline" className="border-zinc-700 text-zinc-400 cursor-help">
-                    <FiClock className="w-3 h-3 mr-1" />
-                    Last updated: May 18, 2025
-                  </Badge>
-                </TooltipTrigger>
-                <TooltipContent className="bg-zinc-800 text-white">
-                  Exchange rates are updated daily
-                </TooltipContent>
-              </Tooltip>
             </div>
           </CardFooter>
         </Card>
 
-        {/* History Card */}
-        <Card className='w-full lg:max-w-[40%] rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
-          <CardHeader className='mb-3 p-0'>
-            <div className='flex items-center gap-3'>
-              <div className='bg-indigo-700 rounded-full p-2'>
-                <FiClock className='text-white h-5 w-5' />
+        {/* History Card - Only Show When History Exists */}
+        {history.length > 0 && (
+          <Card className='w-full lg:max-w-[40%] rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
+            <CardHeader className='mb-3 p-0'>
+              <div className='flex items-center gap-3'>
+                <div className='bg-indigo-700 rounded-full p-2'>
+                  <FiClock className='text-white h-5 w-5' />
+                </div>
+                <div>
+                  <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
+                    Conversion History
+                  </CardTitle>
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
-                  Conversion History
-                </CardTitle>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Badge variant="outline" className="border-indigo-700/30 text-indigo-300">
-                      Last {history.length} entries
-                    </Badge>
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-zinc-800 text-white">
-                    Showing your most recent conversions
-                  </TooltipContent>
-                </Tooltip>
-              </div>
-            </div>
-          </CardHeader>
+            </CardHeader>
 
-          <CardContent className='p-0 max-h-[400px] overflow-y-auto custom-scrollbar'>
-            {history.length === 0 ? (
-              <div className='text-center py-10 text-zinc-500'>
-                <p>No conversion history yet</p>
-                <p className='text-sm mt-2'>Your conversions will appear here</p>
-              </div>
-            ) : (
+            <CardContent className='p-0 max-h-[400px] overflow-y-auto custom-scrollbar'>
               <div className='space-y-3 mt-2'>
                 {history.map((item) => (
                   <div
@@ -331,17 +321,6 @@ export default function Home() {
                         </TooltipTrigger>
                         <TooltipContent className="bg-zinc-800 text-white">
                           {item.timestamp.toLocaleDateString()} {item.timestamp.toLocaleTimeString()}
-                        </TooltipContent>
-                      </Tooltip>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Badge variant="secondary" className="bg-blue-900/30 text-blue-300 border-blue-700/30 flex items-center gap-1">
-                            <FiCheck size={10} />
-                            Converted
-                          </Badge>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-zinc-800 text-white">
-                          Conversion completed successfully
                         </TooltipContent>
                       </Tooltip>
                     </div>
@@ -369,9 +348,26 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            )}
-          </CardContent>
-        </Card>
+            </CardContent>
+            <CardFooter className="p-0 mt-4 flex justify-center">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                    onClick={() => setHistory([])}
+                  >
+                    Clear History
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 text-white">
+                  Clear all conversion history
+                </TooltipContent>
+              </Tooltip>
+            </CardFooter>
+          </Card>
+        )}
       </div>
 
       <footer className='mt-8 text-center text-xs text-zinc-500'>
