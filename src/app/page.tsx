@@ -6,11 +6,13 @@ import { MdCurrencyBitcoin } from "react-icons/md";
 import { TbCurrencyDollar, TbCurrencyEuro, TbCurrencyPound, TbCurrencyRupee, TbCurrencyYen } from 'react-icons/tb';
 
 // Import Shadcn UI components
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 // Dummy currency rates relative to USD
 const RATES = {
@@ -86,39 +88,76 @@ export default function Home() {
   return (
     <div className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-black p-6 font-mono'>
       <div className='flex items-center justify-center mb-8'>
-        <div className='bg-blue-600 p-3 rounded-full'>
-          <MdCurrencyBitcoin className="text-white w-8 h-8" />
-        </div>
-        <h1 className='ml-3 text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-mono'>
-          cur-con
-        </h1>
+        <Tooltip>
+          <TooltipTrigger className="flex items-center">
+            <div className='bg-blue-600 p-3 rounded-full'>
+              <MdCurrencyBitcoin className="text-white w-8 h-8" />
+            </div>
+            <h1 className='ml-3 text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-mono'>
+              cur-con
+            </h1>
+          </TooltipTrigger>
+          <TooltipContent className="bg-zinc-800 text-white">
+            The modern currency converter
+          </TooltipContent>
+        </Tooltip>
       </div>
       <div className='flex w-full max-w-5xl gap-6 flex-col lg:flex-row'>
         {/* Main Converter Card */}
         <Card className='w-full lg:max-w-[60%] rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
           <CardHeader className='mb-4 flex items-center justify-between p-0'>
-            <div className='flex items-center gap-3'>
-              <div className='bg-blue-600 rounded-full p-2'>
-                <FiRefreshCw className='text-white h-5 w-5' />
+            <div className='flex items-center justify-between'>
+              <div className='flex items-center gap-3'>
+                <div className='bg-blue-600 rounded-full p-2'>
+                  <FiRefreshCw className='text-white h-5 w-5' />
+                </div>
+                <CardTitle className='text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent'>
+                  Currency Converter
+                </CardTitle>
               </div>
-              <CardTitle className='text-2xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent'>
-                Currency Converter
-              </CardTitle>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="secondary" className="bg-blue-900/30 text-blue-300 border-blue-700/20">
+                    {Object.keys(RATES).length} currencies
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 text-white flex gap-1">
+                  {Object.keys(RATES).map((currency) => (
+                    <Badge key={currency} variant="outline" className="border-blue-700/30">
+                      {currency}
+                    </Badge>
+                  ))}
+                </TooltipContent>
+              </Tooltip>
             </div>
           </CardHeader>
 
           <CardContent className='p-0 space-y-6'>
             {/* Amount Input */}
             <div className='space-y-2'>
-              <Label htmlFor='amount' className='block text-sm font-medium text-zinc-300'>
-                Amount
-              </Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor='amount' className='block text-sm font-medium text-zinc-300'>
+                  Amount
+                </Label>
+                {amount && isNaN(parseFloat(amount)) && (
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Badge variant="destructive" className="opacity-90">Invalid number</Badge>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-zinc-800 text-red-300">
+                      Please enter a valid number
+                    </TooltipContent>
+                  </Tooltip>
+                )}
+              </div>
               <Input
                 type='number'
                 id='amount'
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className='w-full border-blue-900/30 bg-zinc-800/70 text-white focus:border-blue-500 focus:ring-blue-500/20 text-lg'
+                className={`w-full border-blue-900/30 bg-zinc-800/70 text-white focus:border-blue-500 focus:ring-blue-500/20 text-lg ${
+                  amount && isNaN(parseFloat(amount)) ? 'border-red-500/50' : ''
+                }`}
               />
             </div>
 
@@ -148,13 +187,20 @@ export default function Home() {
               </div>
 
               {/* Swap Button */}
-              <Button
-                onClick={handleSwapCurrencies}
-                variant='ghost'
-                size='icon'
-                className='mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105'>
-                <FiRefreshCw className='text-white' />
-              </Button>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    onClick={handleSwapCurrencies}
+                    variant='ghost'
+                    size='icon'
+                    className='mt-5 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-700 transition-all duration-200 hover:scale-105'>
+                    <FiRefreshCw className='text-white' />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 text-white">
+                  Swap currencies
+                </TooltipContent>
+              </Tooltip>
 
               {/* To Currency */}
               <div className='space-y-2'>
@@ -182,47 +228,76 @@ export default function Home() {
 
             {/* Result */}
             <div className='mt-8 rounded-xl bg-gradient-to-r from-blue-900/30 to-indigo-900/30 p-5 border border-blue-800/30'>
-              <div className='flex items-center justify-between text-zinc-200'>
-                <div className='flex items-center gap-2'>
-                  {fromCurrency &&
-                    (() => {
-                      const CurrencyIcon = CURRENCY_ICONS[fromCurrency];
-                      return <CurrencyIcon className='h-6 w-6' />;
-                    })()}
-                  <span>
-                    {parseFloat(amount) ? parseFloat(amount).toFixed(2) : '0.00'} {fromCurrency}
-                  </span>
+              <div className='space-y-3'>
+                <div className='flex justify-end'>
+                  <Badge variant="outline" className="bg-blue-900/40 text-blue-300 border-blue-700/30">
+                    Live Rate
+                  </Badge>
                 </div>
-                <div className='bg-blue-700/40 rounded-full p-1'>
-                  <FiArrowRight className='text-blue-300' />
-                </div>
-                <div className='flex items-center gap-2'>
-                  {toCurrency &&
-                    (() => {
-                      const CurrencyIcon = CURRENCY_ICONS[toCurrency];
-                      return <CurrencyIcon className='h-6 w-6' />;
-                    })()}
-                  <span className='font-medium text-white text-lg'>
-                    {result.toFixed(2)} {toCurrency}
-                  </span>
+                <div className='flex items-center justify-between text-zinc-200'>
+                  <div className='flex items-center gap-2'>
+                    {fromCurrency &&
+                      (() => {
+                        const CurrencyIcon = CURRENCY_ICONS[fromCurrency];
+                        return <CurrencyIcon className='h-6 w-6' />;
+                      })()}
+                    <span>
+                      {parseFloat(amount) ? parseFloat(amount).toFixed(2) : '0.00'} {fromCurrency}
+                    </span>
+                  </div>
+                  <div className='bg-blue-700/40 rounded-full p-1'>
+                    <FiArrowRight className='text-blue-300' />
+                  </div>
+                  <div className='flex items-center gap-2'>
+                    {toCurrency &&
+                      (() => {
+                        const CurrencyIcon = CURRENCY_ICONS[toCurrency];
+                        return <CurrencyIcon className='h-6 w-6' />;
+                      })()}
+                    <span className='font-medium text-white text-lg'>
+                      {result.toFixed(2)} {toCurrency}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
             {/* Convert Button */}
-            <Button
-              onClick={addToHistory}
-              className='w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl font-medium mt-2 transition-all hover:shadow-lg hover:shadow-blue-700/20'>
-              Convert & Save
-            </Button>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={addToHistory}
+                  className='w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl font-medium mt-2 transition-all hover:shadow-lg hover:shadow-blue-700/20'>
+                  <FiCheck className="mr-2 h-4 w-4" />
+                  Convert & Save
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent className="bg-zinc-800 text-white">
+                Save this conversion to history
+              </TooltipContent>
+            </Tooltip>
           </CardContent>
 
           <CardFooter className='p-0 mt-5 justify-center flex-col'>
-            <div className='text-center text-xs text-zinc-400'>
-              <p>
-                1 {fromCurrency} = {(RATES[toCurrency] / RATES[fromCurrency]).toFixed(4)} {toCurrency}
-              </p>
-              <p className='mt-1'>Last updated: May 18, 2025</p>
+            <div className='text-center text-xs text-zinc-400 space-y-2'>
+              <div className="flex items-center justify-center gap-2">
+                <Badge variant="secondary" className="bg-blue-600/20 text-blue-300 border-blue-500/20">
+                  <span className="font-mono">
+                    1 {fromCurrency} = {(RATES[toCurrency] / RATES[fromCurrency]).toFixed(4)} {toCurrency}
+                  </span>
+                </Badge>
+              </div>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="outline" className="border-zinc-700 text-zinc-400 cursor-help">
+                    <FiClock className="w-3 h-3 mr-1" />
+                    Last updated: May 18, 2025
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent className="bg-zinc-800 text-white">
+                  Exchange rates are updated daily
+                </TooltipContent>
+              </Tooltip>
             </div>
           </CardFooter>
         </Card>
@@ -234,9 +309,21 @@ export default function Home() {
               <div className='bg-indigo-700 rounded-full p-2'>
                 <FiClock className='text-white h-5 w-5' />
               </div>
-              <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
-                Conversion History
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
+                  Conversion History
+                </CardTitle>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="outline" className="border-indigo-700/30 text-indigo-300">
+                      Last {history.length} entries
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent className="bg-zinc-800 text-white">
+                    Showing your most recent conversions
+                  </TooltipContent>
+                </Tooltip>
+              </div>
             </div>
           </CardHeader>
 
@@ -253,13 +340,27 @@ export default function Home() {
                     key={item.id}
                     className='p-3 rounded-lg border border-zinc-800/50 bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors'>
                     <div className='flex justify-between items-center mb-1'>
-                      <span className='text-zinc-400 text-xs'>
-                        {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                      <span className='bg-blue-900/30 text-blue-300 text-xs py-0.5 px-2 rounded-full flex items-center gap-1'>
-                        <FiCheck size={10} />
-                        Converted
-                      </span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className='text-zinc-400 text-xs cursor-help'>
+                            {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-zinc-800 text-white">
+                          {item.timestamp.toLocaleDateString()} {item.timestamp.toLocaleTimeString()}
+                        </TooltipContent>
+                      </Tooltip>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Badge variant="secondary" className="bg-blue-900/30 text-blue-300 border-blue-700/30 flex items-center gap-1">
+                            <FiCheck size={10} />
+                            Converted
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-zinc-800 text-white">
+                          Conversion completed successfully
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                     <div className='flex items-center justify-between text-zinc-300 text-sm'>
                       <div className='flex items-center gap-1'>
@@ -292,7 +393,16 @@ export default function Home() {
 
       <footer className='mt-8 text-center text-xs text-zinc-500'>
         <p>Rates are for demonstration purposes only</p>
-        <p className='mt-1'>Updated: May 18, 2025 • Powered by cur-con</p>
+        <p className='mt-1'>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="cursor-help">Updated: May 18, 2025 • Powered by <Badge variant="outline" className="border-blue-700/20 text-blue-400">cur-con</Badge></span>
+            </TooltipTrigger>
+            <TooltipContent className="bg-zinc-800 text-white">
+              Currency converter with real-time rates
+            </TooltipContent>
+          </Tooltip>
+        </p>
       </footer>
     </div>
   );
