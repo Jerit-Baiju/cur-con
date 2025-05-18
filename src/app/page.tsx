@@ -82,7 +82,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-black p-6">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-black p-6 font-mono">
       <div className="flex items-center justify-center mb-8">
         <div className="bg-blue-600 p-3 rounded-full">
           <Image
@@ -93,8 +93,8 @@ export default function Home() {
             className="invert"
           />
         </div>
-        <h1 className="ml-3 text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-          CurrencyHub
+        <h1 className="ml-3 text-3xl font-bold bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent font-mono">
+          cur-con
         </h1>
       </div>
       <div className="flex w-full max-w-5xl gap-6 flex-col lg:flex-row">
@@ -287,7 +287,7 @@ export default function Home() {
       
       <footer className="mt-8 text-center text-xs text-zinc-500">
         <p>Rates are for demonstration purposes only</p>
-        <p className="mt-1">Updated: May 18, 2025 • Powered by Shadcn UI & Next.js</p>
+        <p className="mt-1">Updated: May 18, 2025 • Powered by cur-con</p>
       </footer>
     </div>
   );
