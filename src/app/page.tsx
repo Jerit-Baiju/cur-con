@@ -229,11 +229,6 @@ export default function Home() {
             {/* Result */}
             <div className='mt-8 rounded-xl bg-gradient-to-r from-blue-900/30 to-indigo-900/30 p-5 border border-blue-800/30'>
               <div className='space-y-3'>
-                <div className='flex justify-end'>
-                  <Badge variant="outline" className="bg-blue-900/40 text-blue-300 border-blue-700/30">
-                    Live Rate
-                  </Badge>
-                </div>
                 <div className='flex items-center justify-between text-zinc-200'>
                   <div className='flex items-center gap-2'>
                     {fromCurrency &&
