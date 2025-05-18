@@ -242,28 +242,14 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Convert Button - Two buttons in one row */}
-            <div className="grid grid-cols-2 gap-4 mt-2">
-              <Button
-                onClick={() => {
-                  const numericAmount = parseFloat(amount);
-                  if (!isNaN(numericAmount) && numericAmount > 0) {
-                    // Just update the result without adding to history
-                    setResult(numericAmount * (RATES[toCurrency] / RATES[fromCurrency]));
-                  }
-                }}
-                disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
-                variant="outline"
-                className='py-6 border-blue-700/30 bg-blue-900/20 text-blue-300 hover:bg-blue-800/30 hover:text-white rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed'>
-                <FiRefreshCw className="mr-2 h-5 w-5" />
-                Convert
-              </Button>
+            {/* Save to History button */}
+            <div className="mt-2">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     onClick={addToHistory}
                     disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
-                    className='bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white py-6 rounded-xl font-medium transition-all hover:shadow-lg hover:shadow-blue-700/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-700'>
+                    className='w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-6 h-[56px] rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-700 transition-all duration-200 hover:from-blue-500 hover:to-indigo-500 hover:shadow-lg hover:shadow-blue-600/20'>
                     <FiCheck className="mr-2 h-5 w-5" />
                     Save to History
                   </Button>
