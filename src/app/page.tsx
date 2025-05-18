@@ -1,7 +1,8 @@
 'use client';
 
+import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
-import { FiArrowRight, FiCheck, FiClock, FiRefreshCw } from 'react-icons/fi';
+import { FiArrowRight, FiCheck, FiClock, FiRefreshCw, FiX } from 'react-icons/fi';
 import { MdCurrencyBitcoin } from "react-icons/md";
 import { TbCurrencyDollar, TbCurrencyEuro, TbCurrencyPound, TbCurrencyRupee, TbCurrencyYen } from 'react-icons/tb';
 
@@ -83,6 +84,11 @@ export default function Home() {
   const handleSwapCurrencies = () => {
     setFromCurrency(toCurrency);
     setToCurrency(fromCurrency);
+  };
+
+  // Remove a specific history item by its ID
+  const removeHistoryItem = (id: string) => {
+    setHistory((prev) => prev.filter(item => item.id !== id));
   };
 
   return (
@@ -246,13 +252,25 @@ export default function Home() {
             <div className="mt-2">
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button
-                    onClick={addToHistory}
-                    disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
-                    className='w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-6 h-[56px] rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-700 transition-all duration-200 hover:from-blue-500 hover:to-indigo-500 hover:shadow-lg hover:shadow-blue-600/20'>
-                    <FiCheck className="mr-2 h-5 w-5" />
-                    Save to History
-                  </Button>
+                  <motion.div
+                    whileHover={{ scale: 1.02 }} 
+                    whileTap={{ scale: 0.98 }}
+                    className="w-full"
+                  >
+                    <Button
+                      onClick={addToHistory}
+                      disabled={isNaN(parseFloat(amount)) || parseFloat(amount) <= 0}
+                      className='w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-6 h-[56px] rounded-xl font-medium disabled:opacity-50 disabled:cursor-not-allowed disabled:from-gray-600 disabled:to-gray-700 transition-all duration-200 hover:from-blue-500 hover:to-indigo-500 hover:shadow-lg hover:shadow-blue-600/20'>
+                      <motion.div
+                        initial={{ rotate: 0 }}
+                        whileTap={{ rotate: [0, 15, 0, -15, 0] }}
+                        transition={{ duration: 0.5 }}
+                      >
+                        <FiCheck className="mr-2 h-5 w-5" />
+                      </motion.div>
+                      Save to History
+                    </Button>
+                  </motion.div>
                 </TooltipTrigger>
                 <TooltipContent className="bg-zinc-800 text-white">
                   {isNaN(parseFloat(amount)) || parseFloat(amount) <= 0
@@ -277,83 +295,132 @@ export default function Home() {
         </Card>
 
         {/* History Card - Only Show When History Exists */}
-        {history.length > 0 && (
-          <Card className='w-full lg:max-w-[40%] rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
-            <CardHeader className='mb-3 p-0'>
-              <div className='flex items-center gap-3'>
-                <div className='bg-indigo-700 rounded-full p-2'>
-                  <FiClock className='text-white h-5 w-5' />
-                </div>
-                <div>
-                  <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
-                    Conversion History
-                  </CardTitle>
-                </div>
-              </div>
-            </CardHeader>
-
-            <CardContent className='p-0 max-h-[400px] overflow-y-auto custom-scrollbar'>
-              <div className='space-y-3 mt-2'>
-                {history.map((item) => (
-                  <div
-                    key={item.id}
-                    className='p-3 rounded-lg border border-zinc-800/50 bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors'>
-                    <div className='flex justify-between items-center mb-1'>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className='text-zinc-400 text-xs cursor-help'>
-                            {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                          </span>
-                        </TooltipTrigger>
-                        <TooltipContent className="bg-zinc-800 text-white">
-                          {item.timestamp.toLocaleDateString()} {item.timestamp.toLocaleTimeString()}
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className='flex items-center justify-between text-zinc-300 text-sm'>
-                      <div className='flex items-center gap-1'>
-                        {(() => {
-                          const CurrencyIcon = CURRENCY_ICONS[item.fromCurrency];
-                          return <CurrencyIcon className='h-4 w-4' />;
-                        })()}
-                        <span>
-                          {parseFloat(item.amount).toFixed(2)} {item.fromCurrency}
-                        </span>
-                      </div>
-                      <FiArrowRight className='text-zinc-500 h-3 w-3' />
-                      <div className='flex items-center gap-1'>
-                        {(() => {
-                          const CurrencyIcon = CURRENCY_ICONS[item.toCurrency];
-                          return <CurrencyIcon className='h-4 w-4' />;
-                        })()}
-                        <span>
-                          {item.result.toFixed(2)} {item.toCurrency}
-                        </span>
-                      </div>
+        <AnimatePresence>
+          {history.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 50, width: 0 }}
+              animate={{ opacity: 1, x: 0, width: "100%" }}
+              exit={{ opacity: 0, x: 50, width: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="w-full lg:max-w-[40%]"
+            >
+              <Card className='w-full rounded-xl bg-zinc-900/70 p-6 backdrop-blur-md border border-zinc-800/30 shadow-2xl'>
+                <CardHeader className='mb-3 p-0'>
+                  <div className='flex items-center gap-3'>
+                    <motion.div 
+                      initial={{ rotate: -90, scale: 0.5 }}
+                      animate={{ rotate: 0, scale: 1 }}
+                      transition={{ delay: 0.2, duration: 0.4 }}
+                      className='bg-indigo-700 rounded-full p-2'
+                    >
+                      <FiClock className='text-white h-5 w-5' />
+                    </motion.div>
+                    <div>
+                      <CardTitle className='text-xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent'>
+                        Conversion History
+                      </CardTitle>
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-            <CardFooter className="p-0 mt-4 flex justify-center">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    className="w-full bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                    onClick={() => setHistory([])}
-                  >
-                    Clear History
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent className="bg-zinc-800 text-white">
-                  Clear all conversion history
-                </TooltipContent>
-              </Tooltip>
-            </CardFooter>
-          </Card>
-        )}
+                </CardHeader>
+
+                <CardContent className='p-0 max-h-[400px] overflow-y-auto custom-scrollbar'>
+                  <div className='space-y-3 mt-2'>
+                    <AnimatePresence>
+                      {history.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          initial={{ opacity: 0, y: -20, height: 0 }}
+                          animate={{ opacity: 1, y: 0, height: "auto" }}
+                          exit={{ opacity: 0, y: 20, height: 0 }}
+                          transition={{ duration: 0.2 }}
+                          className='p-3 rounded-lg border border-zinc-800/50 bg-zinc-800/30 hover:bg-zinc-800/50 transition-colors relative group'
+                        >
+                          <div className='flex justify-between items-center mb-1'>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className='text-zinc-400 text-xs cursor-help'>
+                                  {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-zinc-800 text-white">
+                                {item.timestamp.toLocaleDateString()} {item.timestamp.toLocaleTimeString()}
+                              </TooltipContent>
+                            </Tooltip>
+                            
+                            {/* Delete button - visible on hover */}
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <motion.button 
+                                  whileHover={{ scale: 1.1 }}
+                                  whileTap={{ scale: 0.9 }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    removeHistoryItem(item.id);
+                                  }}
+                                  className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full bg-red-500/20 hover:bg-red-500/40"
+                                  aria-label="Remove this history item"
+                                >
+                                  <FiX className="h-3 w-3 text-red-300 hover:text-white" />
+                                </motion.button>
+                              </TooltipTrigger>
+                              <TooltipContent className="bg-zinc-800 text-white">
+                                Remove this item
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                          <div className='flex items-center justify-between text-zinc-300 text-sm'>
+                            <div className='flex items-center gap-1'>
+                              {(() => {
+                                const CurrencyIcon = CURRENCY_ICONS[item.fromCurrency];
+                                return <CurrencyIcon className='h-4 w-4' />;
+                              })()}
+                              <span>
+                                {parseFloat(item.amount).toFixed(2)} {item.fromCurrency}
+                              </span>
+                            </div>
+                            <FiArrowRight className='text-zinc-500 h-3 w-3' />
+                            <div className='flex items-center gap-1'>
+                              {(() => {
+                                const CurrencyIcon = CURRENCY_ICONS[item.toCurrency];
+                                return <CurrencyIcon className='h-4 w-4' />;
+                              })()}
+                              <span>
+                                {item.result.toFixed(2)} {item.toCurrency}
+                              </span>
+                            </div>
+                          </div>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </CardContent>
+                <CardFooter className="p-0 mt-4 flex justify-center">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <motion.div
+                        whileHover={{ scale: 1.03 }}
+                        whileTap={{ scale: 0.97 }}
+                        className="w-full"
+                      >
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          className="w-full bg-zinc-900 border-zinc-700 text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                          onClick={() => setHistory([])}
+                        >
+                          Clear History
+                        </Button>
+                      </motion.div>
+                    </TooltipTrigger>
+                    <TooltipContent className="bg-zinc-800 text-white">
+                      Clear all conversion history
+                    </TooltipContent>
+                  </Tooltip>
+                </CardFooter>
+              </Card>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <footer className='mt-8 text-center text-xs text-zinc-500'>
